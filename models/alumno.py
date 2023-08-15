@@ -1,5 +1,4 @@
 from sqlalchemy import Column, types, orm
-from sqlalchemy.orm import declarative_base
 from config.conexion_bd import session, Base
 
 

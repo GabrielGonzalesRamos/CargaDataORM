@@ -1,6 +1,6 @@
 from sqlalchemy import Column, types
 from sqlalchemy.sql.schema import ForeignKey
-from config.conexion_bd import session, Base
+from config.conexion_bd import Base
 
 
 class AlumnoCursoModel(Base):
