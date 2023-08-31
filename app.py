@@ -3,27 +3,30 @@ from config.conexion_bd import session
 from models.alumno import AlumnoModel
 from models.curso import CursoModel
 from models.alumno_curso import AlumnoCursoModel
-from random import randint
+from random import randint, choice
+from string import digits
 from faker import Faker
 from datetime import datetime
-from uuid import uuid4
 import os
 
 
 fake = Faker(['es_MX', 'es_AR', 'es_CL', 'es_CO'])
 
 def TablaAlumno(alumnos):
-    for i in range(1,int(alumnos) + 1):
-        matricula = uuid4()
+    for i in range(1, int(alumnos) + 1):
         nombre = f'{fake.first_name()}'
         apellido = f'{fake.last_name()} {fake.last_name()}'
+        dni = ''.join(choice(digits) for i in range(1,9))
         direccion =  fake.address()
         pais = fake.current_country()
         fecha_nacimiento = fake.date_between_dates(date_start=datetime(1990,1,1), date_end=datetime(2000,12,31))
         try:
-            AlumnoModel(nombre=nombre, apellido=apellido, matricula=matricula, direccion=direccion, pais=pais, fecha_nacimiento=fecha_nacimiento).save()
+            alumno = AlumnoModel(nombre=nombre, apellido=apellido, dni=dni, direccion=direccion, pais=pais, fecha_nacimiento=fecha_nacimiento)
+            session.add(alumno)
+            session.commit()
         except Exception as E:
             print(E)
+            session.rollback()
 
 def TablaCurso():
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'others/', '{}'.format(os.environ.get('TXT'))), mode='r') as cursos:
@@ -31,9 +34,11 @@ def TablaCurso():
             fecha_inicio = fake.date_between_dates(date_start=datetime(2023,1,1), date_end=datetime(2023,7,31))
             fecha_fin = fake.date_between_dates(date_start=fecha_inicio, date_end=datetime(2023,7,31))
             try:
-                CursoModel(nombre=i.strip(), fecha_inicio=fecha_inicio, fecha_fin=fecha_fin).save()
+                session.add(CursoModel(nombre=i.strip(), fecha_inicio=fecha_inicio, fecha_fin=fecha_fin))
+                session.commit()
             except Exception as E:
                 print(E)
+                session.rollback()
 
 def TablaAlumnoCurso(alumnos):
     id_min_alumno = session.query(func.min(AlumnoModel.alumnoId)).scalar()
@@ -58,6 +63,7 @@ if __name__ == '__main__':
     TablaAlumno(500)
     TablaCurso()
     TablaAlumnoCurso(500)
+    session.close()
 
         
 
