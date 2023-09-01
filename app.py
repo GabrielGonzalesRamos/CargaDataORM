@@ -48,7 +48,7 @@ def TablaAlumnoCurso(alumnos):
     
     contador = 1
     
-    while contador <= (int(alumnos)//2):
+    while contador <= (int(alumnos)):
 
         alumno = randint(id_min_alumno, id_max_alumno)
         curso = randint(id_min_curso, id_max_curso)
@@ -60,9 +60,9 @@ def TablaAlumnoCurso(alumnos):
             session.rollback()
         
 if __name__ == '__main__':
-    TablaAlumno(500)
+    TablaAlumno(2500)
     TablaCurso()
-    TablaAlumnoCurso(500)
+    TablaAlumnoCurso(2500)
     session.close()
 
         
