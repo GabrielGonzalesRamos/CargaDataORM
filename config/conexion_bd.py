@@ -8,6 +8,6 @@ load_dotenv()
 
 Base = declarative_base()
 
-engine = create_engine(environ.get('DATABASE_URI'), echo=True)
+engine = create_engine(environ.get('DATABASE_URI_PROD'), echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
